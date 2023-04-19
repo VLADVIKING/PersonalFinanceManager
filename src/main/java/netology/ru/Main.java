@@ -12,7 +12,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        MaxCategory.loadCategoriesList();
+        MaxCategory maxCategory = new MaxCategory();
+        maxCategory.loadCategoriesList();
 
         try (ServerSocket server = new ServerSocket(8989)) {
 
@@ -27,15 +28,15 @@ public class Main {
                     try {
                         Object object = parser.parse(new StringReader(reader.readLine()));
                         JSONObject jsonObject = (JSONObject) object;
-                        MaxCategory.setProductName((String) jsonObject.get("title"));
-                        MaxCategory.setDate((String) jsonObject.get("date"));
-                        MaxCategory.setCategorySum((Long) jsonObject.get("sum"));
+                        maxCategory.setProductName((String) jsonObject.get("title"));
+                        maxCategory.setDate((String) jsonObject.get("date"));
+                        maxCategory.setCategorySum((Long) jsonObject.get("sum"));
 
-                        MaxCategory.maxCategoryCalc();
+                        maxCategory.maxCategoryCalc();
 
                         JSONObject maxOutput = new JSONObject();
-                        maxOutput.put("sum", MaxCategory.getMaxSum());
-                        maxOutput.put("category", MaxCategory.getMaxCategory());
+                        maxOutput.put("sum", maxCategory.getMaxSum());
+                        maxOutput.put("category", maxCategory.getMaxCategory());
                         System.out.println("{\n" +
                                 "'maxCategory':\n" +
                                 maxOutput.toJSONString() + "\n}");

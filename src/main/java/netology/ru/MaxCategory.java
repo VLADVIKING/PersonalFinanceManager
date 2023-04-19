@@ -7,13 +7,13 @@ import java.util.*;
 
 public class MaxCategory {
 
-    private static long maxSum = 0;
-    private static String productName;
-    private static String date;
-    private static long categorySum;
-    private static List<String> products = new ArrayList<>();
-    private static List<String> categories = new ArrayList<>();
-    private static Map<String, Long> maxResult = new HashMap<>();
+    private long maxSum = 0;
+    private String productName;
+    private String date;
+    private long categorySum;
+    private List<String> products = new ArrayList<>();
+    private List<String> categories = new ArrayList<>();
+    private Map<String, Long> maxResult = new HashMap<>();
 
 
     public MaxCategory(String productName, String date, long categorySum) {
@@ -22,7 +22,9 @@ public class MaxCategory {
         this.categorySum = categorySum;
     }
 
-    public static void loadCategoriesList() {
+    public MaxCategory() {}
+
+    public void loadCategoriesList() {
         try (BufferedReader in = new BufferedReader(new FileReader("categories.tsv"))) {
             String line;
             while ((line = in.readLine()) != null) {
@@ -37,7 +39,7 @@ public class MaxCategory {
         }
     }
 
-    public static Map<String, Long> maxCategoryCalc() {
+    public Map<String, Long> maxCategoryCalc() {
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).equals((getProductName()))) {
                 maxSum = maxResult.get(categories.get(i));
@@ -52,40 +54,40 @@ public class MaxCategory {
         return maxResult;
     }
 
-    public static long getMaxSum() {
+    public long getMaxSum() {
         return maxSum;
     }
 
-    public static String getMaxCategory() {
+    public String getMaxCategory() {
         for (String maxCategory : maxResult.keySet()) {
-            if (MaxCategory.getMaxSum() == maxResult.get(maxCategory)) {
+            if (getMaxSum() == maxResult.get(maxCategory)) {
                 return maxCategory;
             }
         }
         return null; }
 
-    public static String getProductName() {
+    public String getProductName() {
         return productName;
     }
 
-    public static void setProductName(String productName) {
-        MaxCategory.productName = productName;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
-    public static long getCategorySum() {
+    public long getCategorySum() {
         return categorySum;
     }
 
-    public static void setCategorySum(long categorySum) {
-        MaxCategory.categorySum = categorySum;
+    public void setCategorySum(long categorySum) {
+        this.categorySum = categorySum;
     }
 
-    public static String getDate() {
+    public String getDate() {
         return date;
     }
 
-    public static void setDate(String date) {
-        MaxCategory.date = date;
+    public void setDate(String date) {
+        this.date = date;
     }
 
 }

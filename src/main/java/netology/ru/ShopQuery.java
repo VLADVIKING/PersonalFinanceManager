@@ -23,9 +23,9 @@ public class ShopQuery {
         ) {
             reader.readLine();
             JSONObject obj = new JSONObject();
-            obj.put("title", ShopQuery.scannerShopTitle());
-            obj.put("date", ShopQuery.scannerShopDate());
-            obj.put("sum", ShopQuery.scannerShopSum());
+            obj.put("title", scannerShopTitle());
+            obj.put("date", scannerShopDate());
+            obj.put("sum", scannerShopSum());
             writer.println(obj.toJSONString());
         } catch (IOException e) {
             e.printStackTrace();
