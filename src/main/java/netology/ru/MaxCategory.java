@@ -8,6 +8,7 @@ import java.util.*;
 public class MaxCategory {
 
     private long maxSum = 0;
+    private long categorySumTotal = 0;
     private String productName;
     private String date;
     private long categorySum;
@@ -42,29 +43,30 @@ public class MaxCategory {
     public Map<String, Long> maxCategoryCalc() {
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).equals((getProductName()))) {
-                maxSum = maxResult.get(categories.get(i));
-                maxSum += getCategorySum();
-                maxResult.put(categories.get(i), maxSum);
+                categorySumTotal = maxResult.get(categories.get(i));
+                categorySumTotal += getCategorySum();
+                maxResult.put(categories.get(i), categorySumTotal);
                 return maxResult;
             }
         }
-        maxSum = maxResult.get("другое");
-        maxSum += getCategorySum();
-        maxResult.put("другое", maxSum);
+        categorySumTotal = maxResult.get("другое");
+        categorySumTotal += getCategorySum();
+        maxResult.put("другое", categorySumTotal);
         return maxResult;
     }
 
     public long getMaxSum() {
-        return maxSum;
+        long maxValue = Collections.max(maxResult.values());
+        return maxValue;
     }
 
-    public String getMaxCategory() {
-        for (String maxCategory : maxResult.keySet()) {
-            if (getMaxSum() == maxResult.get(maxCategory)) {
-                return maxCategory;
-            }
-        }
-        return null; }
+    public List<String> getMaxCategory() {
+        List<String> keys = new ArrayList<>();
+        maxResult.entrySet().stream()
+                .filter(value -> value.getValue() == getMaxSum())
+                .forEach(key -> keys.add(key.getKey()));
+        return keys;
+    }
 
     public String getProductName() {
         return productName;
