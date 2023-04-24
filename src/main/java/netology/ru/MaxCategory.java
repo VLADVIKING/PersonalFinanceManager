@@ -1,31 +1,30 @@
 package netology.ru;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class MaxCategory {
 
-    private long maxSum = 0;
-    private long categorySumTotal = 0;
+    private long categorySum = 0;
     private String productName;
     private String date;
-    private long categorySum;
+    private long productSum;
     private List<String> products = new ArrayList<>();
     private List<String> categories = new ArrayList<>();
     private Map<String, Long> maxResult = new HashMap<>();
 
 
-    public MaxCategory(String productName, String date, long categorySum) {
+    public MaxCategory(String productName, String date, long productSum) {
         this.productName = productName;
         this.date = date;
-        this.categorySum = categorySum;
+        this.productSum = productSum;
     }
 
-    public MaxCategory() {}
+    public MaxCategory() {
+    }
 
     public void loadCategoriesList() {
+
         try (BufferedReader in = new BufferedReader(new FileReader("categories.tsv"))) {
             String line;
             while ((line = in.readLine()) != null) {
@@ -35,23 +34,31 @@ public class MaxCategory {
                 maxResult.put(arr[1], 0L);
             }
             maxResult.put("другое", 0L);
+
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        File file = new File("data.bin");
+        if (file.exists()) {
+            loadDataBin();
         }
     }
 
     public Map<String, Long> maxCategoryCalc() {
+
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).equals((getProductName()))) {
-                categorySumTotal = maxResult.get(categories.get(i));
-                categorySumTotal += getCategorySum();
-                maxResult.put(categories.get(i), categorySumTotal);
+                categorySum = maxResult.get(categories.get(i));
+                categorySum += getProductSum();
+                maxResult.put(categories.get(i), categorySum);
+                saveDataBin();
                 return maxResult;
             }
         }
-        categorySumTotal = maxResult.get("другое");
-        categorySumTotal += getCategorySum();
-        maxResult.put("другое", categorySumTotal);
+        categorySum = maxResult.get("другое");
+        categorySum += getProductSum();
+        maxResult.put("другое", categorySum);
+        saveDataBin();
         return maxResult;
     }
 
@@ -76,12 +83,12 @@ public class MaxCategory {
         this.productName = productName;
     }
 
-    public long getCategorySum() {
-        return categorySum;
+    public long getProductSum() {
+        return productSum;
     }
 
-    public void setCategorySum(long categorySum) {
-        this.categorySum = categorySum;
+    public void setProductSum(long categorySum) {
+        this.productSum = categorySum;
     }
 
     public String getDate() {
@@ -92,4 +99,27 @@ public class MaxCategory {
         this.date = date;
     }
 
+    public void saveDataBin() {
+        try (FileOutputStream fos = new FileOutputStream("data.bin");
+             PrintStream out = new PrintStream(fos)) {
+            for (var entry : maxResult.entrySet()) {
+                out.println(entry.getKey() + "\t" + entry.getValue());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void loadDataBin() {
+        try (BufferedReader in = new BufferedReader(new FileReader("data.bin"))) {
+            String line;
+            while ((line = in.readLine()) != null) {
+                String[] arr = line.split("\\s+");
+                for (int i = 0; i < arr.length; i++) {
+                    maxResult.put(arr[0], Long.parseLong(arr[1]));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

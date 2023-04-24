@@ -30,7 +30,7 @@ public class Main {
                         JSONObject jsonObject = (JSONObject) object;
                         maxCategory.setProductName((String) jsonObject.get("title"));
                         maxCategory.setDate((String) jsonObject.get("date"));
-                        maxCategory.setCategorySum((Long) jsonObject.get("sum"));
+                        maxCategory.setProductSum((Long) jsonObject.get("sum"));
 
                         maxCategory.maxCategoryCalc();
 
