@@ -12,7 +12,7 @@ public class MaxCategoryTest extends TestCase {
     public void testMaxCategoryCalc() {
 
         Map<String, Long> expect = new HashMap<>();
-        expect.put(maxCategoryMock.getCategoryName(), maxCategoryMock.getCategorySum());
+        expect.put(maxCategoryMock.getCategoryName(), maxCategoryMock.getProductSum());
         Map<String, Long> result = new HashMap<>();
         result.putAll(maxCategoryMock.maxCategoryCalc());
         assertEquals(expect.get(maxCategoryMock.getCategoryName()), result.get(maxCategoryMock.getCategoryName()));

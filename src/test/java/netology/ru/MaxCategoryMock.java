@@ -30,7 +30,7 @@ public class MaxCategoryMock extends MaxCategory {
     }
 
     @Override
-    public long getCategorySum() {
+    public long getProductSum() {
         return 300L;
     }
     @Override
@@ -41,13 +41,13 @@ loadMaxResultMap();
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).equals((getProductName()))) {
                 categorySumTotal = maxResult.get(categories.get(i));
-                categorySumTotal += getCategorySum();
+                categorySumTotal += getProductSum();
                 maxResult.put(categories.get(i), categorySumTotal);
                 return maxResult;
             }
         }
         categorySumTotal = maxResult.get("другое");
-        categorySumTotal += getCategorySum();
+        categorySumTotal += getProductSum();
         maxResult.put("другое", categorySumTotal);
         return maxResult;
     }
