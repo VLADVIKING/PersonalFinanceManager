@@ -1,6 +1,8 @@
 package netology.ru;
 
 import java.io.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class MaxCategory {
@@ -12,6 +14,21 @@ public class MaxCategory {
     private List<String> products = new ArrayList<>();
     private List<String> categories = new ArrayList<>();
     private Map<String, Long> maxResult = new HashMap<>();
+    private long maxValue;
+    private List<String> savedMaxCategories = new ArrayList<>();
+    private List<Long> savedMaxSums = new ArrayList<>();
+    private List<String> savedDates = new ArrayList<>();
+    private List<LocalDate> localDates = new ArrayList<>();
+    private List<String> dayMaxCategories = new ArrayList<>();
+    private List<Long> dayMaxSums = new ArrayList<>();
+    private long dayMaxValue;
+    private List<String> monthMaxCategories = new ArrayList<>();
+    private List<Long> monthMaxSums = new ArrayList<>();
+    private long monthMaxValue;
+    private List<String> yearMaxCategories = new ArrayList<>();
+    private List<Long> yearMaxSums = new ArrayList<>();
+    private long yearMaxValue;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 
 
     public MaxCategory(String productName, String date, long productSum) {
@@ -34,7 +51,6 @@ public class MaxCategory {
                 maxResult.put(arr[1], 0L);
             }
             maxResult.put("другое", 0L);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,7 +79,7 @@ public class MaxCategory {
     }
 
     public long getMaxSum() {
-        long maxValue = Collections.max(maxResult.values());
+        maxValue = Collections.max(maxResult.values());
         return maxValue;
     }
 
@@ -100,26 +116,151 @@ public class MaxCategory {
     }
 
     public void saveDataBin() {
-        try (FileOutputStream fos = new FileOutputStream("data.bin");
+        try (FileOutputStream fos = new FileOutputStream("data.bin", true);
              PrintStream out = new PrintStream(fos)) {
             for (var entry : maxResult.entrySet()) {
                 out.println(entry.getKey() + "\t" + entry.getValue());
             }
+            out.println(getMaxCategory() + "\t" + getMaxSum() + "\t" + getDate());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     public void loadDataBin() {
         try (BufferedReader in = new BufferedReader(new FileReader("data.bin"))) {
             String line;
             while ((line = in.readLine()) != null) {
+
                 String[] arr = line.split("\\s+");
-                for (int i = 0; i < arr.length; i++) {
+                if (arr.length == 2) {
                     maxResult.put(arr[0], Long.parseLong(arr[1]));
+                    continue;
                 }
+
+                savedMaxCategories.add(arr[0]);
+                savedMaxSums.add(Long.parseLong(arr[arr.length - 2]));
+                savedDates.add(arr[arr.length - 1]);
+            }
+            for (int i = 0; i < savedDates.size(); i++) {
+                localDates.add(LocalDate.parse(savedDates.get(i), formatter));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public void daySortedMaxCollections() {
+        for (int i = 0; i < localDates.size(); i++) {
+            if (localDates.get(i).isEqual(LocalDate.now())) {
+                dayMaxCategories.add(savedMaxCategories.get(i));
+                dayMaxSums.add(savedMaxSums.get(i));
+            }
+            if ((LocalDate.parse(getDate(), formatter).isEqual(LocalDate.now()))) {
+                dayMaxCategories.add(getMaxCategory().toString());
+                dayMaxSums.add(getMaxSum());
+            }
+        }
+    }
+
+    public long getDayMaxSum() {
+        daySortedMaxCollections();
+        if (dayMaxSums.size() == 0) {
+            dayMaxValue = getMaxSum();
+            return dayMaxValue;
+        }
+        dayMaxValue = Collections.max(dayMaxSums);
+        return dayMaxValue;
+    }
+
+    public List<String> getDayMaxCategory() {
+        List<String> dayCategories = new ArrayList<>();
+        if (dayMaxCategories.size() == 0) {
+            dayCategories.addAll(getMaxCategory());
+            return dayCategories;
+        }
+        for (int i = 0; i < dayMaxCategories.size(); i++) {
+            if (dayMaxSums.get(i).equals(dayMaxValue)) {
+                dayCategories.add(dayMaxCategories.get(i));
+            }
+        }
+        return dayCategories;
+    }
+
+    public void monthSortedMaxCollections() {
+
+        for (int i = 0; i < localDates.size(); i++) {
+            if (localDates.get(i).isAfter(LocalDate.now().minusMonths(1))) {
+                monthMaxCategories.add(savedMaxCategories.get(i));
+                monthMaxSums.add(savedMaxSums.get(i));
+            }
+        }
+        if ((LocalDate.parse(getDate(), formatter).isAfter(LocalDate.now().minusMonths(1)))) {
+            monthMaxCategories.add(getMaxCategory().toString());
+            monthMaxSums.add(getMaxSum());
+        }
+    }
+
+    public long getMonthMaxSum() {
+        monthSortedMaxCollections();
+        if (monthMaxSums.size() == 0) {
+            monthMaxValue = getMaxSum();
+            return monthMaxValue;
+        }
+        monthMaxValue = Collections.max(monthMaxSums);
+        return monthMaxValue;
+    }
+
+    public List<String> getMonthMaxCategory() {
+        List<String> monthCategories = new ArrayList<>();
+        if (monthMaxCategories.size() == 0) {
+            monthCategories.addAll(getMaxCategory());
+            return monthCategories;
+        }
+        for (int i = 0; i < monthMaxCategories.size(); i++) {
+            if (monthMaxSums.get(i).equals(monthMaxValue)) {
+                monthCategories.add(monthMaxCategories.get(i));
+            }
+        }
+        return monthCategories;
+    }
+
+    public void yearSortedMaxCollections() {
+
+        for (int i = 0; i < localDates.size(); i++) {
+            if (localDates.get(i).isAfter(LocalDate.now().minusYears(1))) {
+                yearMaxCategories.add(savedMaxCategories.get(i));
+                yearMaxSums.add(savedMaxSums.get(i));
+            }
+        }
+        if ((LocalDate.parse(getDate(), formatter).isAfter(LocalDate.now().minusYears(1)))) {
+            yearMaxCategories.add(getMaxCategory().toString());
+            yearMaxSums.add(getMaxSum());
+        }
+    }
+
+    public long getYearMaxSum() {
+        yearSortedMaxCollections();
+        if (yearMaxSums.size() == 0) {
+            yearMaxValue = getMaxSum();
+            return yearMaxValue;
+        }
+        yearMaxValue = Collections.max(yearMaxSums);
+        return yearMaxValue;
+    }
+
+    public List<String> getYearMaxCategory() {
+        List<String> yearCategories = new ArrayList<>();
+        if (yearMaxCategories.size() == 0) {
+            yearCategories.addAll(getMaxCategory());
+            return yearCategories;
+        }
+        for (int i = 0; i < yearMaxCategories.size(); i++) {
+            if (yearMaxSums.get(i).equals(yearMaxValue)) {
+                yearCategories.add(yearMaxCategories.get(i));
+            }
+        }
+        return yearCategories;
+    }
+
 }
